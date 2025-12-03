@@ -1,4 +1,4 @@
-package co.com.management.api.models.response;
+package co.com.management.api.dto.response;
 
 import co.com.management.model.invoice.Invoice;
 import lombok.AllArgsConstructor;

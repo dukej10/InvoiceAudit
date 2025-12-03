@@ -1,4 +1,3 @@
-// co.com.management.r2dbc.persistence.ClientAdapterImpl
 package co.com.management.r2dbc.persistence;
 
 import co.com.management.model.PageResult;
@@ -13,7 +12,7 @@ import reactor.core.publisher.Mono;
 
 @Repository
 public class ClientAdapterImpl extends ReactiveAdapterOperations<
-        Client, ClientDao, String, ClientReactiveRepository>
+        Client, ClientEntity, String, ClientReactiveRepository>
         implements ClientRepository {
 
     public ClientAdapterImpl(ClientReactiveRepository repository, ObjectMapper mapper) {
@@ -27,14 +26,8 @@ public class ClientAdapterImpl extends ReactiveAdapterOperations<
 
     @Override
     public Mono<Void> deleteClient(String id) {
-        return this.deleteById(id);
-    }
-
-    @Override
-    public Mono<Client> findById(String id) {
-        return repository.findById(id)
-                .map(super::toEntity)
-                .switchIfEmpty(Mono.error(new RuntimeException("Client not found: " + id)));
+        return findById(id)
+                .flatMap(client -> this.deleteById(client.getId()));
     }
 
     @Override
