@@ -1,4 +1,4 @@
-package co.com.management.r2dbc.persistence;
+package co.com.management.r2dbc.persistence.client;
 
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import org.springframework.data.repository.reactive.ReactiveSortingRepository;

@@ -11,43 +11,48 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
+import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
-public class Handler {
+public class ClientHandler {
+
+    private final RequestValidator validator;
+
+    private static final Set<String> PAGINATION_PARAMS = Set.of("page", "size");
+    private static final Set<String> FILTER_PARAMS = Set.of("status", "from", "to");
 
     private final ClientUseCase clientUseCase;
 
     public Mono<ServerResponse> saveClient(ServerRequest serverRequest) {
-        return  serverRequest.bodyToMono(ClientDTO.class)
+        return serverRequest.bodyToMono(ClientDTO.class)
                 .map(RequestMapper::toModel)
                 .flatMap(clientUseCase::saveClient)
                 .flatMap(clientSaved -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
-                        .bodyValue( Utility.structureRS(clientSaved, HttpStatus.OK.value())));
+                        .bodyValue(Utility.structureRS(clientSaved, HttpStatus.OK.value())));
     }
 
-    public Mono<ServerResponse> getClientsPaginable(ServerRequest request) {
-        return request.queryParams()
-                .toSingleValueMap()
-                .containsKey("page") && request.queryParam("size").isPresent()
-                ? processValidRequest(request)
-                : ServerResponse.badRequest().bodyValue("Faltan parámetros page y/o size");
+    public Mono<ServerResponse> updateClient(ServerRequest serverRequest) {
+        return serverRequest.bodyToMono(ClientDTO.class)
+                .map(RequestMapper::toModel)
+                .flatMap(clientUseCase::updateClient)
+                .flatMap(clientUpdated -> ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(Utility.structureRS(clientUpdated, HttpStatus.OK.value())));
     }
 
-    private Mono<ServerResponse> processValidRequest(ServerRequest request) {
-        int page = Integer.parseInt(request.queryParam("page").get());
-        int size = Integer.parseInt(request.queryParam("size").get());
 
-        return clientUseCase.getAllPageable(page, size)
-                .map(ResponseMapper::toPageResultClientDTO)
-                .flatMap(dto -> ServerResponse.ok().bodyValue(
-                        Utility.structureRS(dto, HttpStatus.OK.value())
-                ));
-    }
+    public Mono<ServerResponse> getClientsPageable(ServerRequest request) {
+        return validator.requireParams(request, PAGINATION_PARAMS)
+                .flatMap(req -> {
+                    int page = Integer.parseInt(req.queryParam("page").get());
+                    int size = Integer.parseInt(req.queryParam("size").orElse("10"));
 
-    public Mono<ServerResponse> listenPOSTUseCase(ServerRequest serverRequest) {
-        // useCase.logic();
-        return ServerResponse.ok().bodyValue("");
+                    return clientUseCase.getAllPageable(page, size)
+                            .map(ResponseMapper::toPageResultClientDTO)
+                            .flatMap(dto -> ServerResponse.ok()
+                                    .bodyValue(Utility.structureRS(dto, HttpStatus.OK.value())));
+                });
     }
 }
