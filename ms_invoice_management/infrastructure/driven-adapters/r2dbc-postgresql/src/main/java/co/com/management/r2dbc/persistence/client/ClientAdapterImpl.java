@@ -1,4 +1,4 @@
-package co.com.management.r2dbc.persistence;
+package co.com.management.r2dbc.persistence.client;
 
 import co.com.management.model.PageResult;
 import co.com.management.model.client.Client;

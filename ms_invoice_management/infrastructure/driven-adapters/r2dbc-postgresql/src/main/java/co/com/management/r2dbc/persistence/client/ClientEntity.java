@@ -1,13 +1,11 @@
-package co.com.management.r2dbc.persistence;
+package co.com.management.r2dbc.persistence.client;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.annotation.Version;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
@@ -16,7 +14,6 @@ import java.time.LocalDateTime;
 @Table("clients")
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 public class ClientEntity {
 
@@ -43,14 +40,10 @@ public class ClientEntity {
 
     private String address;
 
-    @CreatedDate
     @Column("created_at")
     private LocalDateTime createdDate;
 
-    @LastModifiedDate
     @Column("updated_at")
     private LocalDateTime updatedDate;
 
-    @Version
-    private Long version;
 }
