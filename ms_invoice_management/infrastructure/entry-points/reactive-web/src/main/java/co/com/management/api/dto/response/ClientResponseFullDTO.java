@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -16,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 public class ClientResponseFullDTO {
-    private String id;
+    private UUID id;
     private String documentNumber;
     private String documentType;
     private Boolean state;

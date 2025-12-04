@@ -22,6 +22,10 @@ public class RouterRest {
                         .nest(path("/clients"), clients -> clients
                                 .GET("/all", clientHandler::getClientsPageable)
                                 .POST("/save", clientHandler::saveClient)
+                                .POST("/update", clientHandler::updateClient)
+                                .GET("/{id}", clientHandler::getClientById)
+                                .GET("/infoDoc", clientHandler::getClientByInfoDoc)
+                                .DELETE("/delete/{id}", clientHandler::deleteClient)
                         )
                 ).build();
 

@@ -12,6 +12,7 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 import java.util.Set;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -21,6 +22,7 @@ public class ClientHandler {
 
     private static final Set<String> PAGINATION_PARAMS = Set.of("page", "size");
     private static final Set<String> FILTER_PARAMS = Set.of("status", "from", "to");
+    private static final Set<String> INFODOC_PARAMS = Set.of("num", "type");
 
     private final ClientUseCase clientUseCase;
 
@@ -37,6 +39,7 @@ public class ClientHandler {
         return serverRequest.bodyToMono(ClientDTO.class)
                 .map(RequestMapper::toModel)
                 .flatMap(clientUseCase::updateClient)
+                .map(ResponseMapper::responseFull)
                 .flatMap(clientUpdated -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(Utility.structureRS(clientUpdated, HttpStatus.OK.value())));
@@ -51,6 +54,39 @@ public class ClientHandler {
 
                     return clientUseCase.getAllPageable(page, size)
                             .map(ResponseMapper::toPageResultClientDTO)
+                            .flatMap(dto -> ServerResponse.ok()
+                                    .bodyValue(Utility.structureRS(dto, HttpStatus.OK.value())));
+                });
+    }
+
+    public Mono<ServerResponse> deleteClient(ServerRequest request) {
+        return validator.requirePathVariables(request, Set.of("id"))
+                .flatMap(req -> {
+                    UUID id = UUID.fromString(req.pathVariable("id"));
+                    return clientUseCase.deleteById(id)
+                            .flatMap(dto -> ServerResponse.ok()
+                                    .bodyValue(Utility.structureRS("", HttpStatus.OK.value())));
+                });
+    }
+
+    public Mono<ServerResponse> getClientById(ServerRequest request) {
+        return validator.requirePathVariables(request, Set.of("id"))
+                .flatMap(req -> {
+                    UUID id = UUID.fromString(req.pathVariable("id"));
+                    return clientUseCase.getById(id)
+                            .flatMap(dto -> ServerResponse.ok()
+                                    .bodyValue(Utility.structureRS(dto, HttpStatus.OK.value())));
+                });
+    }
+
+    public Mono<ServerResponse> getClientByInfoDoc(ServerRequest request) {
+        return validator.requireParams(request, INFODOC_PARAMS)
+                .flatMap(req -> {
+                    String num = req.queryParam("num").get();
+                    String type = req.queryParam("type").get();
+
+                    return clientUseCase.findByInfoDocument(num, type)
+                            .map(ResponseMapper::responseFull)
                             .flatMap(dto -> ServerResponse.ok()
                                     .bodyValue(Utility.structureRS(dto, HttpStatus.OK.value())));
                 });

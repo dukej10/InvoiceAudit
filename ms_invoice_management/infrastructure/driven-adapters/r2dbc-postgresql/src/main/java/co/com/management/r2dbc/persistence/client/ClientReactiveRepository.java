@@ -4,8 +4,10 @@ import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import org.springframework.data.repository.reactive.ReactiveSortingRepository;
 import reactor.core.publisher.Mono;
 
-public interface ClientReactiveRepository extends ReactiveCrudRepository<ClientEntity, String>,
-        ReactiveSortingRepository<ClientEntity, String> {
+import java.util.UUID;
+
+public interface ClientReactiveRepository extends ReactiveCrudRepository<ClientEntity, UUID>,
+        ReactiveSortingRepository<ClientEntity, UUID> {
     Mono<ClientEntity> findByDocumentNumberAndDocumentType(
             String documentNumber,
             String documentType);

@@ -29,20 +29,6 @@ public class ResponseMapper {
                 .build();
     }
 
-    public ClientResponseDTO response(Client client){
-        return  ClientResponseDTO.builder()
-                .firstName(client.getFirstName())
-                .lastName(client.getLastName())
-                .state(client.getState())
-                .documentType(client.getDocumentType())
-                .documentNumber(client.getDocumentNumber())
-                .email(client.getEmail())
-                .phone(client.getPhone())
-                .address(client.getAddress())
-                .invoices(client.getInvoices().stream().map(ResponseMapper::response).toList())
-                .build();
-    }
-
     public InvoiceResponseDTO response(Invoice invoice){
         return  InvoiceResponseDTO.builder()
                 .id(invoice.getId())

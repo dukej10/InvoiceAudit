@@ -10,6 +10,7 @@ import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Table("clients")
 @Getter
@@ -18,7 +19,7 @@ import java.time.LocalDateTime;
 public class ClientEntity {
 
     @Id
-    private String id;
+    private UUID id;
 
     @Column("document_number")
     private String documentNumber;

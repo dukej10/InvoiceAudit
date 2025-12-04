@@ -6,6 +6,8 @@ import co.com.management.model.client.gateways.ClientRepository;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
+import java.util.UUID;
+
 @RequiredArgsConstructor
 public class ClientUseCase {
     private final ClientRepository clientRepository;
@@ -26,12 +28,16 @@ public class ClientUseCase {
         return clientRepository.findByDocumentNumberAndDocumentType(documentNumber, documentType);
     }
 
-    public Mono<Void> deleteById(String id) {
+    public Mono<Void> deleteById(UUID id) {
         return clientRepository.deleteClient(id);
     }
 
     public Mono<PageResult<Client>> getAllPageable(int page, int size) {
         return clientRepository.findAllPageable(page, size);
+    }
+
+    public Mono<Client> getById(UUID id) {
+        return clientRepository.findById(id);
     }
 
 }
