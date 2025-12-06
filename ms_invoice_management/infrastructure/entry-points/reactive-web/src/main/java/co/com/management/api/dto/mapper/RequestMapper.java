@@ -5,7 +5,7 @@ import co.com.management.api.dto.request.InvoiceDTO;
 import co.com.management.api.dto.request.ProductDTO;
 import co.com.management.model.client.Client;
 import co.com.management.model.invoice.Invoice;
-import co.com.management.model.invoice.Product;
+import co.com.management.model.product.Product;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass

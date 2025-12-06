@@ -1,4 +1,4 @@
-package co.com.management.r2dbc.persistence.invoice;
+package co.com.management.r2dbc.persistence.product;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Transient;
 
+import java.math.BigDecimal;
+import java.util.UUID;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -15,7 +18,7 @@ import org.springframework.data.annotation.Transient;
 public class ProductEntity {
 
     @Id
-    private String id;
+    private UUID id;
 
     @Column("name_product")
     private String name;
@@ -23,9 +26,12 @@ public class ProductEntity {
     private Integer quantity;
 
     @Column("unit_price")
-    private Float unitPrice;
+    private BigDecimal unitPrice;
 
-    @Transient
     @Column("invoice_id")
-    private String invoiceId;
+    private UUID invoiceId;
 }
+
+
+
+

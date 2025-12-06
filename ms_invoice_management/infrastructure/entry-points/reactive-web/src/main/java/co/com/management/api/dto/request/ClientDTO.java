@@ -8,6 +8,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 public class ClientDTO {
@@ -17,7 +19,7 @@ public class ClientDTO {
             regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
             message = "El id debe tener un formato UUID válido"
     )
-    private String id;
+    private UUID id;
 
     @NotBlank
     @Size(min = 5, max = 20, message = "El número de documento debe tener entre 5 y 20 caracteres")

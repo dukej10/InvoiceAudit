@@ -3,19 +3,22 @@ package co.com.management.model.invoice.gateways;
 import co.com.management.model.PageResult;
 import co.com.management.model.client.Client;
 import co.com.management.model.invoice.Invoice;
+import reactor.core.publisher.Mono;
+
+import java.util.UUID;
 
 public interface InvoiceRepository {
 
-    PageResult<Invoice> getAllByClientId(String id, int page, int size);
+    Mono<PageResult<Invoice>> getAllByClientId(UUID clientId, int page, int size);
 
-    PageResult<Invoice> getAllPageable(int page, int size);
+    Mono<PageResult<Invoice>> getAllPageable(int page, int size);
 
-    Invoice registerInvoice(Invoice invoice, Client client);
+    Mono<Invoice> registerInvoice(Invoice invoice);
 
-    Invoice getById(String id);
+    Mono<Invoice> getById(UUID id);
 
-    void deleteInvoice(String id);
+    Mono<Void> deleteInvoice(UUID id);
 
-    void deleteAllByClientId(String clientId);
+    Mono<Void> deleteAllByClientId(UUID clientId);
 
 }

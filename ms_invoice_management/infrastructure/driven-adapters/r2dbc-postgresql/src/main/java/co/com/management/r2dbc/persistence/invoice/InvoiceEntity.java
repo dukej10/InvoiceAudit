@@ -9,6 +9,7 @@ import org.springframework.data.relational.core.mapping.Table;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -17,13 +18,13 @@ import java.time.LocalDateTime;
 public class InvoiceEntity {
 
     @Id
-    private String id;
+    private UUID id;
 
     @Column("total_amount")
     private BigDecimal totalAmount;
 
     @Column("client_id")
-    String clientId;
+    private UUID clientId;
 
     @Column("created_at")
     private LocalDateTime createdDate;

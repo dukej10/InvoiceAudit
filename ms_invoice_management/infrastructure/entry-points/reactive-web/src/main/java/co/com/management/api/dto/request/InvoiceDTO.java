@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -18,7 +19,7 @@ import java.util.List;
 public class InvoiceDTO {
 
     @NotNull
-    private String clientId;
+    private UUID clientId;
 
     @Valid
     List<ProductDTO> products;
