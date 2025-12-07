@@ -66,8 +66,8 @@ public class ClientHandler {
                 .flatMap(req -> {
                     UUID id = UUID.fromString(req.pathVariable("id"));
                     return clientUseCase.deleteById(id)
-                            .flatMap(dto -> ServerResponse.ok()
-                                    .bodyValue(Utility.structureRS("", HttpStatus.OK.value())));
+                            .then(ServerResponse.ok()
+                                    .bodyValue(Utility.structureRS("ELIMINÉ", HttpStatus.OK.value())));
                 });
     }
 
