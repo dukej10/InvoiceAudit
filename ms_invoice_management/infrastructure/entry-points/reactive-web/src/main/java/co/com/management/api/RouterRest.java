@@ -1,5 +1,7 @@
 package co.com.management.api;
 
+import co.com.management.api.handler.ClientHandler;
+import co.com.management.api.handler.InvoiceHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +16,7 @@ import static org.springframework.web.reactive.function.server.RequestPredicates
 public class RouterRest {
     private static final String API_V1 = "/api/v1";
     private final ClientHandler clientHandler;
+    private final InvoiceHandler invoiceHandler;
 
     @Bean
     public RouterFunction<ServerResponse> routerFunction() {
@@ -22,10 +25,15 @@ public class RouterRest {
                         .nest(path("/clients"), clients -> clients
                                 .GET("/all", clientHandler::getClientsPageable)
                                 .POST("/save", clientHandler::saveClient)
-                                .POST("/update", clientHandler::updateClient)
+                                .PUT("/update", clientHandler::updateClient)
                                 .GET("/{id}", clientHandler::getClientById)
                                 .GET("/infoDoc", clientHandler::getClientByInfoDoc)
                                 .DELETE("/delete/{id}", clientHandler::deleteClient)
+                        )
+
+                        .nest(path("/invoices"), invoices -> invoices
+                                .POST("/save", invoiceHandler::saveInvoice)
+                                .GET("byClient/{clientId}", invoiceHandler::getInvoicesByClientPageable)
                         )
                 ).build();
 
