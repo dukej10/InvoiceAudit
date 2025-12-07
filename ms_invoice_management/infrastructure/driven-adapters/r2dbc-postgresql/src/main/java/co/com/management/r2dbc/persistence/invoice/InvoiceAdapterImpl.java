@@ -35,7 +35,7 @@ public class InvoiceAdapterImpl extends ReactiveAdapterOperations<
 
     @Override
     public Mono<PageResult<Invoice>> getAllByClientId(UUID clientId, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("created_at").descending());
 
         return findPageByCriteria(
                 repository.findByClientId(clientId, pageable),
