@@ -6,13 +6,13 @@ services:
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: secret
-      POSTGRES_DB: invoice_management
+      POSTGRES_DB: invoice_reactive
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U admin -d invoice_management" ]
+      test: [ "CMD-SHELL", "pg_isready -U admin -d invoice_reactive" ]
       interval: 10s
       timeout: 5s
       retries: 10
