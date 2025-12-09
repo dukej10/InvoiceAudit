@@ -98,4 +98,26 @@ public abstract class ReactiveAdapterOperations<E, D, I, R extends ReactiveCrudR
     public Mono<Page<E>> findAll(int page, int size, Sort sort) {
         return findAll(PageRequest.of(page, size, sort));
     }
+
+    protected <T> Mono<Page<T>> paginate(Flux<T> contentFlux, Mono<Long> totalMono, Pageable pageable) {
+        return Mono.zip(contentFlux.collectList(), totalMono)
+                .map(tuple -> PageableExecutionUtils.getPage(
+                        tuple.getT1(),
+                        pageable,
+                        tuple::getT2
+                ));
+    }
+
+    // Paginar de acuerdo a criterio
+    protected Mono<Page<E>> findPageByCriteria(
+            Flux<D> contentFlux, // contenido
+            Mono<Long> countMono, // cantidad
+            Pageable pageable) {
+
+        return paginate(
+                contentFlux.map(this::toEntity),  // aquí aplica el mapper automáticamente
+                countMono,
+                pageable
+        );
+    }
 }
