@@ -1,6 +1,5 @@
 package co.com.management.api.dto.mapper;
 
-import co.com.management.api.dto.response.ClientResponseDTO;
 import co.com.management.api.dto.response.ClientResponseFullDTO;
 import co.com.management.api.dto.response.InvoiceResponseDTO;
 import co.com.management.api.dto.response.PageResultDTO;
@@ -8,7 +7,7 @@ import co.com.management.api.dto.response.ProductResponseDTO;
 import co.com.management.model.PageResult;
 import co.com.management.model.client.Client;
 import co.com.management.model.invoice.Invoice;
-import co.com.management.model.invoice.Product;
+import co.com.management.model.product.Product;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
@@ -33,13 +32,21 @@ public class ResponseMapper {
         return  InvoiceResponseDTO.builder()
                 .id(invoice.getId())
                 .clientId(invoice.getClientId())
-                .products(invoice.getProducts().stream()
-                        .map(ResponseMapper::responseFull).toList())
                 .createdDate(invoice.getCreatedDate())
                 .build();
     }
 
-    private ProductResponseDTO responseFull(Product product){
+    public InvoiceResponseDTO responseFull(Invoice invoice){
+        return  InvoiceResponseDTO.builder()
+                .id(invoice.getId())
+                .clientId(invoice.getClientId())
+                .products(invoice.getProducts().stream()
+                        .map(ResponseMapper::response).toList())
+                .createdDate(invoice.getCreatedDate())
+                .build();
+    }
+
+    private ProductResponseDTO response(Product product){
         return ProductResponseDTO.builder()
                 .id(product.getId())
                 .name(product.getName())
