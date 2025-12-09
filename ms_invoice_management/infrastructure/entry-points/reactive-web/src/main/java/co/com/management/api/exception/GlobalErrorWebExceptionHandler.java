@@ -1,6 +1,7 @@
 package co.com.management.api.exception;
 
 import co.com.management.api.Utility;
+import co.com.management.model.exception.BusinessException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler;
@@ -19,12 +20,12 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
-// 1. Usamos @Component y @Order para registrar este manejador de errores global.
 @Component
 @Order(-2)
 public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHandler {
@@ -44,7 +45,8 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
 
         this.exceptionHandlers = Map.of(
                 MissingParametersException.class,      this::handleMissingParams,
-                ConstraintViolationException.class,    this::handleConstraintViolation
+                ConstraintViolationException.class,    this::handleConstraintViolation,
+                BusinessException.class, this::handleSpecific
         );
     }
 
@@ -115,6 +117,21 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(Utility.structureRS(body, HttpStatus.BAD_REQUEST.value())));
     }
+
+    private Mono<ServerResponse> handleSpecific(Throwable ex) {
+
+        Map<String, Object> body = Map.of(
+                "timestamp", new Date(),
+                "code", HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                "message", "Error interno del servidor",
+                "error", Optional.ofNullable(ex.getMessage()).orElse("Error desconocido")
+        );
+
+        return ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(Utility.structureRS(body, HttpStatus.INTERNAL_SERVER_ERROR.value())));
+    }
+
     private Mono<ServerResponse> handleGenericException(Throwable ex) {
 
         Map<String, Object> body = Map.of(

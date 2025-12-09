@@ -15,10 +15,6 @@ import java.util.UUID;
 public class ClientDTO {
 
     @NotNull(groups = Update.class, message = "El código es obligatorio para actualizar")
-    @Pattern(
-            regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
-            message = "El id debe tener un formato UUID válido"
-    )
     private UUID id;
 
     @NotBlank

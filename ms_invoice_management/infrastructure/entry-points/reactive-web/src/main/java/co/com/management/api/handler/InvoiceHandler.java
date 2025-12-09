@@ -29,6 +29,7 @@ public class InvoiceHandler {
 
     public Mono<ServerResponse> saveInvoice(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(InvoiceDTO.class)
+                .flatMap(validator::validateDto)
                 .map(RequestMapper::toModel)
                 .flatMap(invoiceUseCase::createInvoice)
                 .flatMap(invoiceSaved -> ServerResponse.ok()

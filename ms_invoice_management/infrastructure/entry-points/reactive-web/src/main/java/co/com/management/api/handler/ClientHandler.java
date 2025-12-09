@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
+
 import java.util.Set;
 import java.util.UUID;
 
@@ -20,16 +21,17 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ClientHandler {
 
-    private final RequestValidator validator;
 
     private static final Set<String> PAGINATION_PARAMS = Set.of("page", "size");
-    private static final Set<String> FILTER_PARAMS = Set.of("status", "from", "to");
     private static final Set<String> INFODOC_PARAMS = Set.of("num", "type");
 
+
+    private final RequestValidator validator;
     private final ClientUseCase clientUseCase;
 
     public Mono<ServerResponse> saveClient(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(ClientDTO.class)
+                .flatMap(validator::validateDto)
                 .map(RequestMapper::toModel)
                 .flatMap(clientUseCase::saveClient)
                 .flatMap(clientSaved -> ServerResponse.ok()
@@ -39,6 +41,7 @@ public class ClientHandler {
 
     public Mono<ServerResponse> updateClient(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(ClientDTO.class)
+                .flatMap(dto -> validator.validateDto(dto, ClientDTO.Update.class))
                 .map(RequestMapper::toModel)
                 .flatMap(clientUseCase::updateClient)
                 .map(ResponseMapper::responseFull)
