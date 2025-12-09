@@ -64,5 +64,25 @@ public class InvoiceHandler {
                 });
     }
 
+    public Mono<ServerResponse> deleteInvoice(ServerRequest request) {
+        return validator.requirePathVariables(request, Set.of("id"))
+                .flatMap(req -> {
+                    UUID id = UUID.fromString(req.pathVariable("id"));
+                    return invoiceUseCase.deleteById(id)
+                            .then(ServerResponse.ok()
+                                    .bodyValue(Utility.structureRS("ELIMINÉ", HttpStatus.OK.value())));
+                });
+    }
 
-}
+    public Mono<ServerResponse> deleteAlInvoicesByClient(ServerRequest request) {
+        return validator.requirePathVariables(request, Set.of("id"))
+                .flatMap(req -> {
+                    UUID id = UUID.fromString(req.pathVariable("id"));
+                    return invoiceUseCase.deleteAllByClientId(id)
+                            .then(ServerResponse.ok()
+                                    .bodyValue(Utility.structureRS("ELIMINÉ", HttpStatus.OK.value())));
+                });
+    }
+
+
+    }

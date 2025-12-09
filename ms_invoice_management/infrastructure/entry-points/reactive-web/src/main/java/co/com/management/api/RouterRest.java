@@ -34,6 +34,9 @@ public class RouterRest {
                         .nest(path("/invoices"), invoices -> invoices
                                 .POST("/save", invoiceHandler::saveInvoice)
                                 .GET("byClient/{clientId}", invoiceHandler::getInvoicesByClientPageable)
+                                .DELETE("/delete/{id}", invoiceHandler::deleteInvoice)
+                                .DELETE("/delete/all-by-client/{id}", invoiceHandler::deleteAlInvoicesByClient)
+                                .GET("all", invoiceHandler::getInvoicesPageable)
                         )
                 ).build();
 
