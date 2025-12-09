@@ -1,6 +1,7 @@
 package co.com.management.usecase.invoice;
 
 import co.com.management.model.PageResult;
+import co.com.management.model.client.gateways.ClientRepository;
 import co.com.management.model.invoice.Invoice;
 import co.com.management.model.product.Product;
 import co.com.management.model.invoice.gateways.InvoiceRepository;
@@ -14,6 +15,7 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 public class InvoiceUseCase {
+    private final ClientRepository clientRepository;
     private final InvoiceRepository invoiceRepository;
     private final ProductRepository productRepository;
 
@@ -27,7 +29,9 @@ public class InvoiceUseCase {
 
     public Mono<Invoice> createInvoice(Invoice invoice) {
         invoice.setTotalAmount(calculateTotalAmount(invoice.getProducts()));
-        return invoiceRepository.registerInvoice(invoice);
+        return clientRepository.findById(invoice.getClientId()).flatMap(
+                clientFound-> invoiceRepository.registerInvoice(invoice)
+        );
     }
 
     public Mono<Void> deleteById(UUID id) {
