@@ -26,6 +26,15 @@ spring:
         max-size: 15
         max-idle-time: 10
 
+rabbitmq:
+  host: localhost
+  port: 5672
+  username: admin
+  password: secret123
+  queue: audit-queue  # Nombre de la cola
+  exchange: audit-exchange  # Exchange directo para simplicidad
+  routing-key: audit-key
+
 management:
   endpoints:
     web:

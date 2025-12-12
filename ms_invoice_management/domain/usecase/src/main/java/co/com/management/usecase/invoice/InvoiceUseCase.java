@@ -2,6 +2,8 @@ package co.com.management.usecase.invoice;
 
 import co.com.management.model.PageResult;
 import co.com.management.model.client.gateways.ClientRepository;
+import co.com.management.model.events.BuyMessage;
+import co.com.management.model.events.gateways.EventsGateway;
 import co.com.management.model.invoice.Invoice;
 import co.com.management.model.product.Product;
 import co.com.management.model.invoice.gateways.InvoiceRepository;
@@ -18,6 +20,8 @@ public class InvoiceUseCase {
     private final ClientRepository clientRepository;
     private final InvoiceRepository invoiceRepository;
     private final ProductRepository productRepository;
+    private final EventsGateway eventsGateway;
+
 
     public Mono<PageResult<Invoice>> getAllPageable(int page, int size) {
         return invoiceRepository.getAllPageable(page, size);
@@ -29,9 +33,17 @@ public class InvoiceUseCase {
 
     public Mono<Invoice> createInvoice(Invoice invoice) {
         invoice.setTotalAmount(calculateTotalAmount(invoice.getProducts()));
-        return clientRepository.findById(invoice.getClientId()).flatMap(
-                clientFound-> invoiceRepository.registerInvoice(invoice)
-        );
+        return clientRepository.findById(invoice.getClientId())
+                .then(
+                        invoiceRepository.registerInvoice(invoice)
+                ).flatMap(
+                        invoiceSaved -> eventsGateway.send(
+                                BuyMessage.builder()
+                                        .clientId(invoiceSaved.getClientId())
+                                        .totalAmount(invoiceSaved.getTotalAmount())
+                                        .build()
+                        ).then(Mono.just(invoiceSaved))
+                );
     }
 
     public Mono<Void> deleteById(UUID id) {
