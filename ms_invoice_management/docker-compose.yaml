@@ -12,11 +12,26 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U admin -d invoice_reactive" ]
+      test: ["CMD-SHELL", "pg_isready -U admin -d invoice_reactive"]
       interval: 10s
       timeout: 5s
       retries: 10
-      start_period: 10s
+
+  rabbitmq:
+    container_name: rabbitmq_invoice_management
+    image: rabbitmq:3.13-management
+    restart: always
+    ports:
+      - "5673:5672"    # cambiamos AMQP a 5673 para no chocar
+      - "15673:15672"  # cambiamos la GUI a 15673 para no chocar
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: secret123
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
 volumes:
   postgres_data:
