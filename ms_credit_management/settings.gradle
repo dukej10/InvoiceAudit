@@ -26,3 +26,7 @@ include ':metrics'
 project(':metrics').projectDir = file('./infrastructure/helpers/metrics')
 include ':dynamo-db'
 project(':dynamo-db').projectDir = file('./infrastructure/driven-adapters/dynamo-db')
+include ':async-event-bus'
+project(':async-event-bus').projectDir = file('./infrastructure/driven-adapters/async-event-bus')
+include ':async-event-handler'
+project(':async-event-handler').projectDir = file('./infrastructure/entry-points/async-event-handler')

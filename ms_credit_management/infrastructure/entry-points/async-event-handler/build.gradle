@@ -1,0 +1,9 @@
+dependencies {
+    implementation project(':model')
+    implementation project(':usecase')
+    implementation 'io.projectreactor.rabbitmq:reactor-rabbitmq:1.5.2'
+    implementation 'org.springframework:spring-context'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '2.7.2'
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+
+}

@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8081
 spring:
   application:
     name: "CreditManagement"
@@ -31,7 +31,7 @@ aws:
 
 rabbitmq:
   host: ${RABBITMQ_HOST:localhost}
-  port: ${RABBITMQ_PORT:5672}
-  username: ${RABBITMQ_USERNAME:guest}
-  password: ${RABBITMQ_PASSWORD:guest}
-  queue: ${RABBITMQ_QUEUE:event.stats.validated}
+  port: ${RABBITMQ_PORT:5673}
+  username: ${RABBITMQ_USERNAME:admin}
+  password: ${RABBITMQ_PASSWORD:secret123}
+  queue: ${RABBITMQ_QUEUE:audit-queue}

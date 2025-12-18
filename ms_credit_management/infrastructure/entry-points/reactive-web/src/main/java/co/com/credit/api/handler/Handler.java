@@ -1,4 +1,4 @@
-package co.com.credit.api;
+package co.com.credit.api.handler;
 
 import co.com.credit.api.dto.CreditDTO;
 import co.com.credit.usecase.credit.CreditUseCase;
@@ -18,39 +18,16 @@ import reactor.core.publisher.Mono;
 public class Handler {
 
     private final CreditUseCase creditUseCase;
-    private final Validator validator;
+    private final RequestValidator validator;
 
     public Mono<ServerResponse> saveCredit(ServerRequest request) {
         return request.bodyToMono(CreditDTO.class)
-                .flatMap(this::validateDto)
+                .flatMap(validator::validateDto)
                 .flatMap(dto -> creditUseCase.saveCredit(dto.getClientId(), dto.getAmount()))
                 .flatMap(credit -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(credit));
     }
 
-    /**
-     * Validación manual de DTO usando Jakarta Validator
-     */
-    private <T> Mono<T> validateDto(T dto) {
-        var violations = validator.validate(dto);
 
-        if (violations.isEmpty()) {
-            return Mono.just(dto);
-        }
-
-        var errors = new BeanPropertyBindingResult(dto, dto.getClass().getSimpleName());
-
-        violations.forEach(v -> errors.addError(new FieldError(
-                dto.getClass().getSimpleName(),
-                v.getPropertyPath().toString(),
-                v.getInvalidValue(),
-                false,
-                null,
-                null,
-                v.getMessage()
-        )));
-
-        return Mono.error(new WebExchangeBindException(null, errors));
-    }
 }
