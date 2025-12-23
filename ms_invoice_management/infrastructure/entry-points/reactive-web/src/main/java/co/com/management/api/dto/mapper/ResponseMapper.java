@@ -2,6 +2,7 @@ package co.com.management.api.dto.mapper;
 
 import co.com.management.api.dto.response.ClientResponseFullDTO;
 import co.com.management.api.dto.response.InvoiceResponseDTO;
+import co.com.management.api.dto.response.LoginRSDTO;
 import co.com.management.api.dto.response.PageResultDTO;
 import co.com.management.api.dto.response.ProductResponseDTO;
 import co.com.management.model.PageResult;
@@ -77,5 +78,13 @@ public class ResponseMapper {
                 pageResult.isHasNext(),
                 pageResult.isHasPrevious()
         );
+    }
+
+    public LoginRSDTO toResponse(String token) {
+        return LoginRSDTO.builder()
+                .accessToken(token)
+                .tokenType("Bearer")
+                .expiresIn(3600L)
+                .build();
     }
 }
