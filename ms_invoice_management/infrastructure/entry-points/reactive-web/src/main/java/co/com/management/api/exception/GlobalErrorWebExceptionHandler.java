@@ -20,6 +20,7 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
+import java.security.GeneralSecurityException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +47,8 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
         this.exceptionHandlers = Map.of(
                 MissingParametersException.class,      this::handleMissingParams,
                 ConstraintViolationException.class,    this::handleConstraintViolation,
-                BusinessException.class, this::handleSpecific
+                BusinessException.class, this::handleSpecific,
+                GeneralSecurityException.class, this::handleAuthorize
         );
     }
 
@@ -116,6 +118,20 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
         return ServerResponse.badRequest()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(Utility.structureRS(body, HttpStatus.BAD_REQUEST.value())));
+    }
+
+    private Mono<ServerResponse> handleAuthorize(Throwable ex) {
+
+        Map<String, Object> body = Map.of(
+                "timestamp", new Date(),
+                "code", HttpStatus.UNAUTHORIZED.value(),
+                "message", "Token inválido o expirado",
+                "error", Optional.ofNullable(ex.getMessage()).orElse("Error desconocido")
+        );
+
+        return ServerResponse.status(HttpStatus.UNAUTHORIZED)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(Utility.structureRS(body, HttpStatus.UNAUTHORIZED.value())));
     }
 
     private Mono<ServerResponse> handleSpecific(Throwable ex) {

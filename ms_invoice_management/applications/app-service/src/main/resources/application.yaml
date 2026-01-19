@@ -35,6 +35,11 @@ rabbitmq:
   exchange: audit-exchange  # Exchange directo para simplicidad
   routing-key: audit-key
 
+security:
+  jwt:
+    secret: ${JWT_SECRET:Rk1LZ1V2R2R0M1Z1U1h4Z25Jb0h1dE1qQ3NPSk1vZ3ZkR0h6c1E=}
+    expiration: 3600000
+
 management:
   endpoints:
     web:
