@@ -12,7 +12,8 @@ public class Utility {
             200, "Operation successful",
             400, "Invalid request",
             404, "Resource not found",
-            500, "Internal server error"
+            500, "Internal server error",
+            401, "Unauthorized"
     );
 
 

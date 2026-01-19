@@ -60,7 +60,7 @@ public class JwtAuthenticationFilter implements WebFilter {
                             ReactiveSecurityContextHolder.withAuthentication(authentication)
                     );
         } catch (Exception ex) {
-            return Mono.error(new GeneralSecurityException("JWT inválido"));
+            return Mono.error(new GeneralSecurityException("Invalid JWT"));
         }
 
     }
