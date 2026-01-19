@@ -37,7 +37,7 @@ public class SecurityConfig {
                             return invalid(exchange, HttpStatus.UNAUTHORIZED, """
                                     {
                                       "code": 401,
-                                      "message": "Token inválido"
+                                      "message": "Invalid Token"
                                     }
                                     """);
                         })
@@ -47,7 +47,7 @@ public class SecurityConfig {
                             return invalid(exchange, HttpStatus.FORBIDDEN, """
                                     {
                                       "code": 403,
-                                      "message": "Acceso denegado"
+                                      "message": "Denied access"
                                     }
                                     """);
                         })

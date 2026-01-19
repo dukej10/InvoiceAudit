@@ -1,5 +1,6 @@
 server:
   port: 8081
+
 spring:
   application:
     name: "CreditManagement"
@@ -11,6 +12,7 @@ spring:
       path: "/h2"
   profiles:
     active: local
+
 management:
   endpoints:
     web:
@@ -20,18 +22,20 @@ management:
     health:
       probes:
         enabled: true
+
 cors:
   allowed-origins: "http://localhost:4200,http://localhost:8080"
+
 aws:
   dynamodb:
     endpoint: ${AWS_DYNAMODB_ENDPOINT:http://localhost:8000}
-    access-key-id: ${AWS_ACCESS_KEY_ID}
-    secret-access-key: ${AWS_SECRET_ACCESS_KEY}
-  region: us-east-1
+    access-key-id: ${AWS_ACCESS_KEY_ID:local}
+    secret-access-key: ${AWS_SECRET_ACCESS_KEY:local}
+  region: ${AWS_REGION:us-east-1}
 
 rabbitmq:
   host: ${RABBITMQ_HOST:localhost}
-  port: ${RABBITMQ_PORT:5673}
+  port: ${RABBITMQ_PORT:5672}
   username: ${RABBITMQ_USERNAME:admin}
   password: ${RABBITMQ_PASSWORD:secret123}
   queue: ${RABBITMQ_QUEUE:audit-queue}
