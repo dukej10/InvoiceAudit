@@ -22,8 +22,8 @@ services:
     image: rabbitmq:3.13-management
     restart: always
     ports:
-      - "5673:5672"    # cambiamos AMQP a 5673 para no chocar
-      - "15673:15672"  # cambiamos la GUI a 15673 para no chocar
+      - "5673:5672"
+      - "15673:15672"
     environment:
       RABBITMQ_DEFAULT_USER: admin
       RABBITMQ_DEFAULT_PASS: secret123
