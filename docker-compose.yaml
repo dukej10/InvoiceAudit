@@ -20,21 +20,15 @@ services:
   dynamodb-local:
     image: amazon/dynamodb-local:latest
     container_name: dynamodb-local
-    restart: always
     ports:
       - "8000:8000"
     environment:
       AWS_ACCESS_KEY_ID: local
       AWS_SECRET_ACCESS_KEY: local
       AWS_REGION: us-east-1
-    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath /home/dynamodblocal/data"
+    command: "-jar DynamoDBLocal.jar -sharedDb"
     volumes:
-      - dynamodb_data:/home/dynamodblocal/data
-    healthcheck:
-      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/8000 && echo -e 'GET / HTTP/1.1\r\nHost: localhost\r\n\r\n' >&3 && grep -q 'HTTP/1.1 400' <&3"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
+      - ./dynamodb_data:/home/dynamodblocal/data
 
   rabbitmq:
     container_name: rabbitmq_invoice_management
@@ -54,4 +48,3 @@ services:
 
 volumes:
   postgres_data:
-  dynamodb_data:
