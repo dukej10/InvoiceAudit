@@ -1,6 +1,5 @@
 package co.com.management.api;
 
-import co.com.management.api.handler.AuthHandler;
 import co.com.management.api.handler.ClientHandler;
 import co.com.management.api.handler.InvoiceHandler;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +17,6 @@ public class RouterRest {
 
     private static final String API_V1 = "/api/v1";
 
-    private final AuthHandler authHandler;
     private final ClientHandler clientHandler;
     private final InvoiceHandler invoiceHandler;
 
@@ -27,11 +25,6 @@ public class RouterRest {
 
         return RouterFunctions.route()
                 .path(API_V1, api -> api
-
-                        .nest(path("/auth"), auth -> auth
-                                .POST("/login", authHandler::login)
-                        )
-
                         .nest(path("/clients"), clients -> clients
                                 .GET("/all", clientHandler::getClientsPageable)
                                 .POST("/save", clientHandler::saveClient)

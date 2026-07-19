@@ -1,5 +1,6 @@
 package co.com.management.api.handler;
 
+import co.com.management.api.Constants;
 import co.com.management.api.RequestValidator;
 import co.com.management.api.Utility;
 import co.com.management.api.dto.mapper.RequestMapper;
@@ -22,9 +23,7 @@ import java.util.UUID;
 public class ClientHandler {
 
 
-    private static final Set<String> PAGINATION_PARAMS = Set.of("page", "size");
-    private static final Set<String> INFODOC_PARAMS = Set.of("num", "type");
-
+    private static final Set<String> INFODOC_PARAMS = Set.of(Constants.NUM_PARAM, Constants.TYPE_PARAM);
 
     private final RequestValidator validator;
     private final ClientUseCase clientUseCase;
@@ -52,22 +51,23 @@ public class ClientHandler {
 
 
     public Mono<ServerResponse> getClientsPageable(ServerRequest request) {
-        return validator.requireParams(request, PAGINATION_PARAMS)
+        return validator.requireParams(request, Constants.PAGINATION_PARAMS)
                 .flatMap(req -> {
-                    int page = Integer.parseInt(req.queryParam("page").get());
-                    int size = Integer.parseInt(req.queryParam("size").orElse("10"));
+                    int page = Integer.parseInt(req.queryParam(Constants.PAGE_PARAM).orElse("1"));
+                    int size = Integer.parseInt(req.queryParam(Constants.SIZE_PARAM).orElse("10"));
 
                     return clientUseCase.getAllPageable(page, size)
                             .map(ResponseMapper::toPageResultClientDTO)
                             .flatMap(dto -> ServerResponse.ok()
+                                    .contentType(MediaType.APPLICATION_JSON)
                                     .bodyValue(Utility.structureRS(dto, HttpStatus.OK.value())));
                 });
     }
 
     public Mono<ServerResponse> deleteClient(ServerRequest request) {
-        return validator.requirePathVariables(request, Set.of("id"))
+        return validator.requirePathVariables(request, Set.of(Constants.ID_PATH))
                 .flatMap(req -> {
-                    UUID id = UUID.fromString(req.pathVariable("id"));
+                    UUID id = UUID.fromString(req.pathVariable(Constants.ID_PATH));
                     return clientUseCase.deleteById(id)
                             .then(ServerResponse.ok()
                                     .bodyValue(Utility.structureRS("ELIMINÉ", HttpStatus.OK.value())));
@@ -75,9 +75,9 @@ public class ClientHandler {
     }
 
     public Mono<ServerResponse> getClientById(ServerRequest request) {
-        return validator.requirePathVariables(request, Set.of("id"))
+        return validator.requirePathVariables(request, Set.of(Constants.ID_PATH))
                 .flatMap(req -> {
-                    UUID id = UUID.fromString(req.pathVariable("id"));
+                    UUID id = UUID.fromString(req.pathVariable(Constants.ID_PATH));
                     return clientUseCase.getById(id)
                             .flatMap(dto -> ServerResponse.ok()
                                     .bodyValue(Utility.structureRS(dto, HttpStatus.OK.value())));
@@ -87,8 +87,8 @@ public class ClientHandler {
     public Mono<ServerResponse> getClientByInfoDoc(ServerRequest request) {
         return validator.requireParams(request, INFODOC_PARAMS)
                 .flatMap(req -> {
-                    String num = req.queryParam("num").get();
-                    String type = req.queryParam("type").get();
+                    String num = req.queryParam(Constants.NUM_PARAM).get();
+                    String type = req.queryParam(Constants.TYPE_PARAM).get();
 
                     return clientUseCase.findByInfoDocument(num, type)
                             .map(ResponseMapper::responseFull)

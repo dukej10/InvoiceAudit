@@ -19,6 +19,20 @@ public class RequestValidator {
 
     private final Validator validator;
 
+    public Mono<ServerRequest> requireHeaders(
+            ServerRequest request,
+            Collection<String> requiredHeaders) {
+
+        Set<String> missing = requiredHeaders.stream()
+                .filter(headerName  -> request.headers().firstHeader(headerName) == null
+                        || request.headers().firstHeader(headerName).trim().isEmpty())
+                .collect(Collectors.toSet());
+
+        return missing.isEmpty()
+                ? Mono.just(request)
+                : Mono.error(new MissingParametersException(missing));
+    }
+
     public Mono<ServerRequest> requireParams(
             ServerRequest request,
             Collection<String> requiredParams) {

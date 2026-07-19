@@ -1,5 +1,6 @@
 package co.com.management.api.handler;
 
+import co.com.management.api.Constants;
 import co.com.management.api.RequestValidator;
 import co.com.management.api.Utility;
 import co.com.management.api.dto.mapper.RequestMapper;
@@ -21,9 +22,9 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class InvoiceHandler {
 
-    private final RequestValidator validator;
 
-    private static final Set<String> PAGINATION_PARAMS = Set.of("page", "size");
+    private static final String CLIENT_ID = "clientId";
+    private final RequestValidator validator;
 
     private final InvoiceUseCase invoiceUseCase;
 
@@ -38,11 +39,11 @@ public class InvoiceHandler {
     }
 
     public Mono<ServerResponse> getInvoicesByClientPageable(ServerRequest request) {
-        return validator.requireParamsAndPathVars(request, PAGINATION_PARAMS, Set.of("clientId"))
+        return validator.requireParamsAndPathVars(request, Constants.PAGINATION_PARAMS, Set.of(CLIENT_ID))
                 .flatMap(req -> {
-                    int page = Integer.parseInt(req.queryParam("page").get());
-                    int size = Integer.parseInt(req.queryParam("size").orElse("10"));
-                    UUID clientId = UUID.fromString(req.pathVariable("clientId"));
+                    int page = Integer.parseInt(req.queryParam(Constants.PAGE_PARAM).orElse("0"));
+                    int size = Integer.parseInt(req.queryParam(Constants.SIZE_PARAM).orElse("10"));
+                    UUID clientId = UUID.fromString(req.pathVariable(CLIENT_ID));
 
                     return invoiceUseCase.getAllByClientId(clientId, page, size)
                             .map(ResponseMapper::toPageResultInvoiceDTO)
@@ -52,10 +53,10 @@ public class InvoiceHandler {
     }
 
     public Mono<ServerResponse> getInvoicesPageable(ServerRequest request) {
-        return validator.requirePathVariables(request, PAGINATION_PARAMS)
+        return validator.requirePathVariables(request, Constants.PAGINATION_PARAMS)
                 .flatMap(req -> {
-                    int page = Integer.parseInt(req.queryParam("page").get());
-                    int size = Integer.parseInt(req.queryParam("size").orElse("10"));
+                    int page = Integer.parseInt(req.queryParam(Constants.PAGE_PARAM).orElse("0"));
+                    int size = Integer.parseInt(req.queryParam(Constants.SIZE_PARAM).orElse("10"));
 
                     return invoiceUseCase.getAllPageable(page, size)
                             .map(ResponseMapper::toPageResultInvoiceDTO)
@@ -65,9 +66,9 @@ public class InvoiceHandler {
     }
 
     public Mono<ServerResponse> deleteInvoice(ServerRequest request) {
-        return validator.requirePathVariables(request, Set.of("id"))
+        return validator.requirePathVariables(request, Set.of(Constants.ID_PATH))
                 .flatMap(req -> {
-                    UUID id = UUID.fromString(req.pathVariable("id"));
+                    UUID id = UUID.fromString(req.pathVariable(Constants.ID_PATH));
                     return invoiceUseCase.deleteById(id)
                             .then(ServerResponse.ok()
                                     .bodyValue(Utility.structureRS("ELIMINÉ", HttpStatus.OK.value())));
@@ -75,9 +76,9 @@ public class InvoiceHandler {
     }
 
     public Mono<ServerResponse> deleteAlInvoicesByClient(ServerRequest request) {
-        return validator.requirePathVariables(request, Set.of("id"))
+        return validator.requirePathVariables(request, Set.of(Constants.ID_PATH))
                 .flatMap(req -> {
-                    UUID id = UUID.fromString(req.pathVariable("id"));
+                    UUID id = UUID.fromString(req.pathVariable(Constants.ID_PATH));
                     return invoiceUseCase.deleteAllByClientId(id)
                             .then(ServerResponse.ok()
                                     .bodyValue(Utility.structureRS("ELIMINÉ", HttpStatus.OK.value())));

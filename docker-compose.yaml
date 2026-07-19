@@ -1,6 +1,6 @@
 services:
   postgres:
-    container_name: postgresql_invoice_management
+    container_name: postgresql_invoice_audit
     image: postgres:15-alpine
     restart: always
     environment:
@@ -8,7 +8,7 @@ services:
       POSTGRES_PASSWORD: secret
       POSTGRES_DB: invoice_reactive
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -20,21 +20,15 @@ services:
   dynamodb-local:
     image: amazon/dynamodb-local:latest
     container_name: dynamodb-local
-    restart: always
     ports:
       - "8000:8000"
     environment:
       AWS_ACCESS_KEY_ID: local
       AWS_SECRET_ACCESS_KEY: local
       AWS_REGION: us-east-1
-    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath /home/dynamodblocal/data"
+    command: "-jar DynamoDBLocal.jar -sharedDb"
     volumes:
-      - dynamodb_data:/home/dynamodblocal/data
-    healthcheck:
-      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/8000 && echo -e 'GET / HTTP/1.1\r\nHost: localhost\r\n\r\n' >&3 && grep -q 'HTTP/1.1 400' <&3"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
+      - ./dynamodb_data:/home/dynamodblocal/data
 
   rabbitmq:
     container_name: rabbitmq_invoice_management
@@ -52,6 +46,20 @@ services:
       timeout: 5s
       retries: 10
 
+  localstack:
+    container_name: localstack_invoice_management
+    image: localstack/localstack:latest
+    ports:
+      - "4566:4566" # endpoint principal
+    environment:
+      - SERVICES=secretsmanager
+      - DEBUG=1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_DEFAULT_REGION=us-east-1
+    volumes:
+      - ./localstack_data:/var/lib/localstack
+      - /var/run/docker.sock:/var/run/docker.sock
+
 volumes:
   postgres_data:
-  dynamodb_data:
