@@ -15,7 +15,7 @@ class PostgreSQLConnectionPoolTest {
     private PostgreSQLConnectionPool connectionPool;
 
     @Mock
-    private PostgresqlConnectionProperties properties;
+    private PostgreSQLConnectionProperties properties;
 
 
     @BeforeEach

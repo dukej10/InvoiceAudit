@@ -6,41 +6,34 @@ spring:
   devtools:
     add-properties: false
   webflux:
-    base-path: /ms_invoice_management
+    base-path: "/ms_invoice_management"
   h2:
     console:
       enabled: true
       path: "/h2"
   profiles:
-    include: null
-  adapter:
-    postgres:
-      database: ${DB_POSTGRES:invoice_management}
-      schema: ${DB_POSTGRES_SCHEMA:public}
-      host: ${DB_POSTGRES_HOST:localhost}
-      port: ${DB_POSTGRES_PORT:5432}
-      username: ${DB_POSTGRES_USER:admin}
-      password: ${DB_POSTGRES_PASS:secret}
-      pool:
-        initial-size: 12
-        max-size: 15
-        max-idle-time: 10
+    include: "${ENV:local}"
 
 rabbitmq:
-  host: localhost
+  host: "localhost"
   port: 5673
-  username: admin
-  password: secret123
-  queue: audit-queue  # Nombre de la cola
-  exchange: audit-exchange  # Exchange directo para simplicidad
-  routing-key: audit-key
-
+  username: "admin"
+  password: "secret123"
+  queue: "audit-queue"
+  exchange: "audit-exchange"
+  routing-key: "audit-key"
 security:
   jwt:
-    secret: ${JWT_SECRET:Rk1LZ1V2R2R0M1Z1U1h4Z25Jb0h1dE1qQ3NPSk1vZ3ZkR0h6c1E=}
+    secret: "${JWT_SECRET:Rk1LZ1V2R2R0M1Z1U1h4Z25Jb0h1dE1qQ3NPSk1vZ3ZkR0h6c1E=}"
     expiration: 3600000
-
 management:
+  adapters:
+    postgresql:
+      schema: "${DB_POSTGRES_SCHEMA:public}"
+      initial-size: 10
+      max-size: 20
+      max-idle-time: 30
+      max-replicas: 1
   endpoints:
     web:
       exposure:
@@ -51,3 +44,11 @@ management:
         enabled: true
 cors:
   allowed-origins: "http://localhost:4200,http://localhost:8080"
+helpers:
+  aws:
+    secrets-manager:
+      region: "${AWS_REGION:us-east-1}"
+      endpoint: "${AWS_ENDPOINT:http://localhost:4566}"
+      cacheSize: "${AWS_CACHE_SIZE:1000}"
+      cacheTime: "${AWS_CACHE_TIME:3600}"
+      secret-postgresql: "${AWS_SECRET_POSTGRESQL:invoice-management-db-secret}"
