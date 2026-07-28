@@ -1,4 +1,4 @@
-package co.com.management.secretsmanager.config.properties;
+package co.com.credit.secretsmanager.config.properties;
 
 import lombok.Getter;
 import lombok.Setter;
