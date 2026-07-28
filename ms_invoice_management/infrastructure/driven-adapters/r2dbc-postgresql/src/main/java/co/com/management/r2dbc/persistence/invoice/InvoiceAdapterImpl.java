@@ -4,7 +4,6 @@ import co.com.management.model.PageResult;
 import co.com.management.model.exception.BusinessException;
 import co.com.management.model.invoice.Invoice;
 import co.com.management.model.invoice.gateways.InvoiceRepository;
-import co.com.management.model.product.Product;
 import co.com.management.model.product.gateways.ProductRepository;
 import co.com.management.r2dbc.helper.ReactiveAdapterOperations;
 import org.reactivecommons.utils.ObjectMapper;
@@ -16,8 +15,6 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @Repository

@@ -4,7 +4,6 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import reactor.core.publisher.Mono;
@@ -18,22 +17,15 @@ import reactor.rabbitmq.ReceiverOptions;
 @Slf4j
 public class RabbitMQReceiverConfig {
 
-    @Value("${rabbitmq.host:localhost}")
-    private String host;
-    @Value("${rabbitmq.port:5672}")
-    private int port;
-    @Value("${rabbitmq.username:guest}")
-    private String username;
-    @Value("${rabbitmq.password:guest}")
-    private String password;
+    private final RabbitMQConnectionProperties rabbitMQConnection;
 
     @Bean
     public ConnectionFactory connectionFactory() {
         ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost(host);
-        factory.setPort(port);
-        factory.setUsername(username);
-        factory.setPassword(password);
+        factory.setHost(rabbitMQConnection.getHost());
+        factory.setPort(rabbitMQConnection.getPort());
+        factory.setUsername(rabbitMQConnection.getUsername());
+        factory.setPassword(rabbitMQConnection.getPassword());
         return factory;
     }
 

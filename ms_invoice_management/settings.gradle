@@ -28,3 +28,7 @@ include ':async-event-bus'
 project(':async-event-bus').projectDir = file('./infrastructure/driven-adapters/async-event-bus')
 include ':security'
 project(':security').projectDir = file('./infrastructure/security')
+include ':metrics'
+project(':metrics').projectDir = file('./infrastructure/helpers/metrics')
+include ':secrets-manager'
+project(':secrets-manager').projectDir = file('./infrastructure/helpers/secrets-manager')

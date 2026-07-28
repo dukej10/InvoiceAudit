@@ -7,9 +7,16 @@ import io.r2dbc.postgresql.PostgresqlConnectionFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.r2dbc.repository.config.EnableR2dbcRepositories;
 
 import java.time.Duration;
+import java.util.Map;
 
+@EnableR2dbcRepositories(basePackages = {
+        "co.com.management.r2dbc.persistence.client",
+        "co.com.management.r2dbc.persistence.invoice",
+        "co.com.management.r2dbc.persistence.product"
+})
 @Configuration
 @RequiredArgsConstructor
 public class PostgreSQLConnectionPool {
@@ -18,14 +25,15 @@ public class PostgreSQLConnectionPool {
 
 
     @Bean
-	public ConnectionPool getConnectionConfig(PostgresqlConnectionProperties properties) {
+	public ConnectionPool getConnectionConfig(PostgreSQLConnectionProperties properties) {
 		PostgresqlConnectionConfiguration dbConfiguration = PostgresqlConnectionConfiguration.builder()
-                .host(properties.host())
-                .port(properties.port())
-                .database(properties.database())
-                .schema(properties.schema())
-                .username(properties.username())
-                .password(properties.password())
+                .host(properties.getHost())
+                .port(properties.getPort())
+                .database(properties.getDbname())
+                .schema(connectionPoolProperties.schema())
+                .options(Map.of("search_path", connectionPoolProperties.schema()))
+                .username(properties.getUsername())
+                .password(properties.getPassword())
                 .build();
 
         ConnectionPoolConfiguration poolConfiguration = ConnectionPoolConfiguration.builder()
@@ -34,6 +42,7 @@ public class PostgreSQLConnectionPool {
                 .initialSize(connectionPoolProperties.initialSize())
                 .maxSize(connectionPoolProperties.maxSize())
                 .maxIdleTime(Duration.ofMinutes(connectionPoolProperties.maxIdleTime()))
+                .validationQuery("SELECT 1")
                 .build();
 
 		return new ConnectionPool(poolConfiguration);

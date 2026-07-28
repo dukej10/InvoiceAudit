@@ -1,6 +1,8 @@
 apply plugin: 'org.springframework.boot'
 
 dependencies {
+	implementation project(':secrets-manager')
+	implementation 'com.github.bancolombia:aws-secrets-manager-async:4.4.36'
 	implementation project(':async-event-handler')
 	implementation project(':async-event-bus')
 	implementation 'org.reactivecommons.utils:object-mapper:0.1.0'

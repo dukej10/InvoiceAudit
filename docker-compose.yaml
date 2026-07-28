@@ -48,18 +48,25 @@ services:
 
   localstack:
     container_name: localstack_invoice_management
-    image: localstack/localstack:latest
+    image: localstack/localstack:3.8
     ports:
-      - "4566:4566" # endpoint principal
+      - "4566:4566"
+      - "4571:4571"
     environment:
       - SERVICES=secretsmanager
       - DEBUG=1
       - AWS_ACCESS_KEY_ID=test
       - AWS_SECRET_ACCESS_KEY=test
       - AWS_DEFAULT_REGION=us-east-1
+      - DOCKER_HOST=unix:///var/run/docker.sock
     volumes:
       - ./localstack_data:/var/lib/localstack
       - /var/run/docker.sock:/var/run/docker.sock
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4566/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
 volumes:
   postgres_data:
