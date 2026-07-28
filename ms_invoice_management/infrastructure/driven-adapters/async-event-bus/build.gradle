@@ -1,5 +1,7 @@
 dependencies {
     implementation project(':model')
+    implementation project(':secrets-manager')
+
     implementation 'org.springframework:spring-context'
     implementation 'io.projectreactor.rabbitmq:reactor-rabbitmq:1.5.2'
     implementation 'com.rabbitmq:amqp-client:5.20.0'

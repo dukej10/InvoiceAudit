@@ -1,5 +1,7 @@
 package co.com.credit.dynamodb.config;
 
+import co.com.credit.secretsmanager.config.properties.SecretManagerProperties;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,21 +19,33 @@ import java.time.Duration;
 
 @Configuration
 public class DynamoDBConfig {
+    private final SecretManagerProperties secretProperties;
+    private final DynamoDBConnectionProperties dynamoProperties;
+    private final String region;
+    private final String endpoint;
 
+
+    public DynamoDBConfig(SecretManagerProperties secretProperties,
+                          DynamoDBConnectionProperties dynamoProperties,
+                          @Value("${aws.region}") String region,
+                          @Value("${aws.dynamodb.endpoint}") String endpoint) {
+        this.secretProperties = secretProperties;
+        this.dynamoProperties =  dynamoProperties;
+        this.region = region;
+        this.endpoint = endpoint;
+    }
     @Bean
     @Profile("local")
     public DynamoDbAsyncClient dynamoDbAsyncClientLocal(
-            @Value("${aws.dynamodb.endpoint}") String endpoint,
-            @Value("${aws.region}") String region,
-            @Value("${aws.dynamodb.access-key-id}") String accessKey,
-            @Value("${aws.dynamodb.secret-access-key}") String secretKey) {
+    ) {
 
         return DynamoDbAsyncClient.builder()
                 .endpointOverride(URI.create(endpoint))
                 .region(Region.of(region))
                 .credentialsProvider(
                         StaticCredentialsProvider.create(
-                                AwsBasicCredentials.create(accessKey, secretKey)
+                                AwsBasicCredentials.create(dynamoProperties.getAccessKey(),
+                                        dynamoProperties.getSecretKey())
                         )
                 )
                 .overrideConfiguration(
@@ -45,8 +59,7 @@ public class DynamoDBConfig {
 
     @Bean
     @Profile({"dev", "cer", "pdn"})
-    public DynamoDbAsyncClient dynamoDbAsyncClientCloud(
-            @Value("${aws.region}") String region) {
+    public DynamoDbAsyncClient dynamoDbAsyncClientCloud() {
 
         return DynamoDbAsyncClient.builder()
                 .credentialsProvider(WebIdentityTokenFileCredentialsProvider.create())
