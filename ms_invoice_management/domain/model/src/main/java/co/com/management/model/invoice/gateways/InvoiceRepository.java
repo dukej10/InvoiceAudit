@@ -1,7 +1,6 @@
 package co.com.management.model.invoice.gateways;
 
 import co.com.management.model.PageResult;
-import co.com.management.model.client.Client;
 import co.com.management.model.invoice.Invoice;
 import reactor.core.publisher.Mono;
 

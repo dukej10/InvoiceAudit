@@ -1,6 +1,5 @@
 package co.com.management.r2dbc.persistence.invoice;
 
-import co.com.management.r2dbc.persistence.client.ClientEntity;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import org.springframework.data.repository.reactive.ReactiveSortingRepository;
