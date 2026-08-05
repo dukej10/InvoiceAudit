@@ -1,6 +1,7 @@
 package co.com.management.api.exception;
 
-import co.com.management.api.Utility;
+import co.com.management.api.dto.response.InvoiceResponseDTO;
+import co.com.management.api.dto.response.StructResponse;
 import co.com.management.model.exception.BusinessException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.boot.autoconfigure.web.WebProperties;
@@ -89,7 +90,7 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
 
         return ServerResponse.badRequest()
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromValue(Utility.structureRS(body, HttpStatus.BAD_REQUEST.value())));
+                .body(BodyInserters.fromValue(StructResponse.structureRS(body, HttpStatus.BAD_REQUEST.value())));
     }
 
     private Mono<ServerResponse> handleConstraintViolation(Throwable t) {
@@ -117,7 +118,7 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
 
         return ServerResponse.badRequest()
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromValue(Utility.structureRS(body, HttpStatus.BAD_REQUEST.value())));
+                .body(BodyInserters.fromValue(StructResponse.structureRS(body, HttpStatus.BAD_REQUEST.value())));
     }
 
     private Mono<ServerResponse> handleAuthorize(Throwable ex) {
@@ -131,7 +132,7 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
 
         return ServerResponse.status(HttpStatus.UNAUTHORIZED)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromValue(Utility.structureRS(body, HttpStatus.UNAUTHORIZED.value())));
+                .body(BodyInserters.fromValue(StructResponse.structureRS(body, HttpStatus.UNAUTHORIZED.value())));
     }
 
     private Mono<ServerResponse> handleSpecific(Throwable ex) {
@@ -145,7 +146,7 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
 
         return ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromValue(Utility.structureRS(body, HttpStatus.INTERNAL_SERVER_ERROR.value())));
+                .body(BodyInserters.fromValue(StructResponse.structureRS(body, HttpStatus.INTERNAL_SERVER_ERROR.value())));
     }
 
     private Mono<ServerResponse> handleGenericException(Throwable ex) {
@@ -158,6 +159,6 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
 
         return ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromValue(Utility.structureRS(body, HttpStatus.INTERNAL_SERVER_ERROR.value())));
+                .body(BodyInserters.fromValue(StructResponse.structureRS(body, HttpStatus.INTERNAL_SERVER_ERROR.value())));
     }
 }

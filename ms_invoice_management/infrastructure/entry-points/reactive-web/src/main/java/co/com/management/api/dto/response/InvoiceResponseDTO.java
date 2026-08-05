@@ -20,4 +20,5 @@ public class InvoiceResponseDTO {
     List<ProductResponseDTO> products;
 
     LocalDateTime createdDate;
+
 }

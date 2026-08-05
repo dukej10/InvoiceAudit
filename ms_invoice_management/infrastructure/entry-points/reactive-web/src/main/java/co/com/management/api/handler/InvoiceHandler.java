@@ -2,10 +2,11 @@ package co.com.management.api.handler;
 
 import co.com.management.api.Constants;
 import co.com.management.api.RequestValidator;
-import co.com.management.api.Utility;
-import co.com.management.api.dto.mapper.RequestMapper;
-import co.com.management.api.dto.mapper.ResponseMapper;
+import co.com.management.api.dto.mapper.RQMapper;
+import co.com.management.api.dto.mapper.RSMapper;
 import co.com.management.api.dto.request.InvoiceDTO;
+import co.com.management.api.dto.response.InvoiceResponseDTO;
+import co.com.management.api.dto.response.StructResponse;
 import co.com.management.usecase.invoice.InvoiceUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,15 +28,19 @@ public class InvoiceHandler {
     private final RequestValidator validator;
 
     private final InvoiceUseCase invoiceUseCase;
+    private final RQMapper rqMapper;
+    private final RSMapper rsMapper;
+
 
     public Mono<ServerResponse> saveInvoice(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(InvoiceDTO.class)
                 .flatMap(validator::validateDto)
-                .map(RequestMapper::toModel)
+                .map(rqMapper::toModel)
                 .flatMap(invoiceUseCase::createInvoice)
+                .map(rsMapper::response)
                 .flatMap(invoiceSaved -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
-                        .bodyValue(Utility.structureRS(invoiceSaved, HttpStatus.OK.value())));
+                        .bodyValue(StructResponse.structureRS(invoiceSaved, HttpStatus.OK.value())));
     }
 
     public Mono<ServerResponse> getInvoicesByClientPageable(ServerRequest request) {
@@ -46,9 +51,9 @@ public class InvoiceHandler {
                     UUID clientId = UUID.fromString(req.pathVariable(CLIENT_ID));
 
                     return invoiceUseCase.getAllByClientId(clientId, page, size)
-                            .map(ResponseMapper::toPageResultInvoiceDTO)
+                            .map(rsMapper::toPageResultInvoiceDTO)
                             .flatMap(dto -> ServerResponse.ok()
-                                    .bodyValue(Utility.structureRS(dto, HttpStatus.OK.value())));
+                                    .bodyValue(StructResponse.structureRS(dto, HttpStatus.OK.value())));
                 });
     }
 
@@ -59,9 +64,9 @@ public class InvoiceHandler {
                     int size = Integer.parseInt(req.queryParam(Constants.SIZE_PARAM).orElse("10"));
 
                     return invoiceUseCase.getAllPageable(page, size)
-                            .map(ResponseMapper::toPageResultInvoiceDTO)
+                            .map(rsMapper::toPageResultInvoiceDTO)
                             .flatMap(dto -> ServerResponse.ok()
-                                    .bodyValue(Utility.structureRS(dto, HttpStatus.OK.value())));
+                                    .bodyValue(StructResponse.structureRS(dto, HttpStatus.OK.value())));
                 });
     }
 
@@ -71,7 +76,7 @@ public class InvoiceHandler {
                     UUID id = UUID.fromString(req.pathVariable(Constants.ID_PATH));
                     return invoiceUseCase.deleteById(id)
                             .then(ServerResponse.ok()
-                                    .bodyValue(Utility.structureRS("ELIMINÉ", HttpStatus.OK.value())));
+                                    .bodyValue(StructResponse.structureRS("ELIMINÉ", HttpStatus.OK.value())));
                 });
     }
 
@@ -81,7 +86,7 @@ public class InvoiceHandler {
                     UUID id = UUID.fromString(req.pathVariable(Constants.ID_PATH));
                     return invoiceUseCase.deleteAllByClientId(id)
                             .then(ServerResponse.ok()
-                                    .bodyValue(Utility.structureRS("ELIMINÉ", HttpStatus.OK.value())));
+                                    .bodyValue(StructResponse.structureRS("ELIMINÉ", HttpStatus.OK.value())));
                 });
     }
 

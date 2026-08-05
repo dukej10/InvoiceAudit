@@ -2,10 +2,11 @@ package co.com.management.api.handler;
 
 import co.com.management.api.Constants;
 import co.com.management.api.RequestValidator;
-import co.com.management.api.Utility;
-import co.com.management.api.dto.mapper.RequestMapper;
-import co.com.management.api.dto.mapper.ResponseMapper;
+import co.com.management.api.dto.mapper.RQMapper;
+import co.com.management.api.dto.mapper.RSMapper;
 import co.com.management.api.dto.request.ClientDTO;
+import co.com.management.api.dto.response.InvoiceResponseDTO;
+import co.com.management.api.dto.response.StructResponse;
 import co.com.management.usecase.client.ClientUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,26 +28,30 @@ public class ClientHandler {
 
     private final RequestValidator validator;
     private final ClientUseCase clientUseCase;
+    private final RQMapper rqMapper;
+    private final RSMapper rsMapper;
+
 
     public Mono<ServerResponse> saveClient(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(ClientDTO.class)
                 .flatMap(validator::validateDto)
-                .map(RequestMapper::toModel)
+                .map(rqMapper::toModel)
                 .flatMap(clientUseCase::saveClient)
+                .map(rsMapper::response)
                 .flatMap(clientSaved -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
-                        .bodyValue(Utility.structureRS(clientSaved, HttpStatus.OK.value())));
+                        .bodyValue(StructResponse.structureRS(clientSaved, HttpStatus.OK.value())));
     }
 
     public Mono<ServerResponse> updateClient(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(ClientDTO.class)
                 .flatMap(dto -> validator.validateDto(dto, ClientDTO.Update.class))
-                .map(RequestMapper::toModel)
+                .map(rqMapper::toModel)
                 .flatMap(clientUseCase::updateClient)
-                .map(ResponseMapper::responseFull)
+                .map(rsMapper::response)
                 .flatMap(clientUpdated -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
-                        .bodyValue(Utility.structureRS(clientUpdated, HttpStatus.OK.value())));
+                        .bodyValue(StructResponse.structureRS(clientUpdated, HttpStatus.OK.value())));
     }
 
 
@@ -57,10 +62,10 @@ public class ClientHandler {
                     int size = Integer.parseInt(req.queryParam(Constants.SIZE_PARAM).orElse("10"));
 
                     return clientUseCase.getAllPageable(page, size)
-                            .map(ResponseMapper::toPageResultClientDTO)
+                            .map(rsMapper::toPageResultClientDTO)
                             .flatMap(dto -> ServerResponse.ok()
                                     .contentType(MediaType.APPLICATION_JSON)
-                                    .bodyValue(Utility.structureRS(dto, HttpStatus.OK.value())));
+                                    .bodyValue(StructResponse.structureRS(dto, HttpStatus.OK.value())));
                 });
     }
 
@@ -70,7 +75,7 @@ public class ClientHandler {
                     UUID id = UUID.fromString(req.pathVariable(Constants.ID_PATH));
                     return clientUseCase.deleteById(id)
                             .then(ServerResponse.ok()
-                                    .bodyValue(Utility.structureRS("ELIMINÉ", HttpStatus.OK.value())));
+                                    .bodyValue(StructResponse.structureRS("ELIMINÉ", HttpStatus.OK.value())));
                 });
     }
 
@@ -80,7 +85,7 @@ public class ClientHandler {
                     UUID id = UUID.fromString(req.pathVariable(Constants.ID_PATH));
                     return clientUseCase.getById(id)
                             .flatMap(dto -> ServerResponse.ok()
-                                    .bodyValue(Utility.structureRS(dto, HttpStatus.OK.value())));
+                                    .bodyValue(StructResponse.structureRS(dto, HttpStatus.OK.value())));
                 });
     }
 
@@ -91,9 +96,9 @@ public class ClientHandler {
                     String type = req.queryParam(Constants.TYPE_PARAM).get();
 
                     return clientUseCase.findByInfoDocument(num, type)
-                            .map(ResponseMapper::responseFull)
+                            .map(rsMapper::response)
                             .flatMap(dto -> ServerResponse.ok()
-                                    .bodyValue(Utility.structureRS(dto, HttpStatus.OK.value())));
+                                    .bodyValue(StructResponse.structureRS(dto, HttpStatus.OK.value())));
                 });
     }
 }

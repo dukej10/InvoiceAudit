@@ -1,6 +1,7 @@
 package co.com.management.api.dto.response;
 
 import co.com.management.model.invoice.Invoice;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,6 +21,8 @@ public class ClientResponseFullDTO {
     private UUID id;
     private String documentNumber;
     private String documentType;
+
+    @JsonProperty("isActive")
     private Boolean state;
     private String firstName;
     private String lastName;
